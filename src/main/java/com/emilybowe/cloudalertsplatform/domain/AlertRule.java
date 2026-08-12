@@ -62,7 +62,39 @@ public class AlertRule {
         return name;
     }
 
+    public String getService() {
+        return service;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public Severity getSeverity() {
         return severity;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateSeverity(Severity severity) {
+        this.severity = severity;
+    }
+
+    public void updateEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }
