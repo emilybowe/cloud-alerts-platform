@@ -49,6 +49,7 @@ public class Incident {
         this.alertName = alertName;
         this.severity = severity;
         this.summary = summary;
+        this.status = IncidentStatus.OPEN;
     }
 
     @PrePersist
@@ -57,7 +58,6 @@ public class Incident {
         createdAt = now;
         updatedAt = now;
         if (startedAt == null) startedAt = now;
-        status = IncidentStatus.OPEN;
     }
 
     @PreUpdate
@@ -65,4 +65,78 @@ public class Incident {
         updatedAt = Instant.now();
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getRuleId() {
+        return ruleId;
+    }
+
+    public String getAlertName() {
+        return alertName;
+    }
+
+    public IncidentStatus getStatus() {
+        return status;
+    }
+
+    public Severity getSeverity() {
+        return severity;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public Instant getStartedAt() {
+        return startedAt;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Instant getAcknowledgedAt() {
+        return acknowledgedAt;
+    }
+
+    public Instant getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public void updateSeverity(Severity severity) {
+        this.severity = severity;
+    }
+
+    public void updateStatus(IncidentStatus status) {
+        this.status = status;
+        Instant now = Instant.now();
+        if (status == IncidentStatus.ACKNOWLEDGED) updateAcknowledgedAt(now);
+        if (status == IncidentStatus.RESOLVED) updateResolvedAt(now);
+    }
+
+    public void updateDetails(String details) {
+        this.details = details;
+    }
+
+    public void updateRuleId(UUID ruleId) {
+        this.ruleId = ruleId;
+    }
+
+    private void updateAcknowledgedAt(Instant acknowledgedAt) {
+        this.acknowledgedAt = acknowledgedAt;
+    }
+
+    private void updateResolvedAt(Instant resolvedAt) {
+        this.resolvedAt = resolvedAt;
+    }
 }
