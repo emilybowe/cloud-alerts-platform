@@ -45,7 +45,7 @@ class IncidentServiceTest {
     }
 
     @Test
-    void updateStatus() {
+    void update() {
         UUID id = UUID.randomUUID();
         Incident incident = new Incident("overload", Severity.CRITICAL, "system overload");
 
@@ -53,26 +53,26 @@ class IncidentServiceTest {
                 .thenReturn(Optional.of(incident));
 
         assertThat(incident.getStatus()).isEqualTo(IncidentStatus.OPEN);
-        Incident ackIncident = incidentService.updateStatus(id, IncidentStatus.ACKNOWLEDGED);
+        Incident ackIncident = incidentService.update(id, IncidentStatus.ACKNOWLEDGED, "");
         assertThat(ackIncident.getStatus()).isEqualTo(IncidentStatus.ACKNOWLEDGED);
         assertThat(ackIncident.getAcknowledgedAt()).isNotNull();
 
-        Incident resolvedIncident = incidentService.updateStatus(id, IncidentStatus.RESOLVED);
+        Incident resolvedIncident = incidentService.update(id, IncidentStatus.RESOLVED, "");
         assertThat(resolvedIncident.getStatus()).isEqualTo(IncidentStatus.RESOLVED);
         assertThat(resolvedIncident.getResolvedAt()).isNotNull();
     }
 
     @Test
-    void updateStatusThrows() {
+    void updateThrows() {
         UUID id = UUID.randomUUID();
         Incident incident = new Incident("overload", Severity.CRITICAL, "system overload");
 
         when(incidentRepository.findById(id))
                 .thenReturn(Optional.of(incident));
 
-        Incident ackIncident = incidentService.updateStatus(id, IncidentStatus.ACKNOWLEDGED);
+        Incident ackIncident = incidentService.update(id, IncidentStatus.ACKNOWLEDGED, "");
         assertThat(ackIncident.getStatus()).isEqualTo(IncidentStatus.ACKNOWLEDGED);
 
-        assertThrows(ConflictException.class, () -> incidentService.updateStatus(id, IncidentStatus.OPEN));
+        assertThrows(ConflictException.class, () -> incidentService.update(id, IncidentStatus.OPEN, ""));
     }
 }

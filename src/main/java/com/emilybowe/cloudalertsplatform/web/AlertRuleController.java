@@ -38,7 +38,8 @@ public class AlertRuleController {
             @PathVariable UUID id,
             @RequestBody UpdateAlertRuleRequest request
     ) {
-        return AlertRuleResponse.from(alertRuleService.update(id,
+        return AlertRuleResponse.from(alertRuleService.update(
+                id,
                 request.description(),
                 request.severity(),
                 request.enabled())

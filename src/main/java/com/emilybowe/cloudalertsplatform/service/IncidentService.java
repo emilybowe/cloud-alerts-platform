@@ -29,7 +29,7 @@ public class IncidentService {
 
     public Incident getById(UUID id) {
         return incidentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException (
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Incident not found for ID: " + id));
     }
 
@@ -37,36 +37,29 @@ public class IncidentService {
         return incidentRepository.findAll();
     }
 
-    public Incident updateStatus(UUID id, IncidentStatus status) {
+    public Incident update(UUID id, IncidentStatus status, String details) {
         Incident incident = this.getById(id);
-        IncidentStatus currentStatus = incident.getStatus();
-        if (isValidStatus(incident, status)) {
-            incident.updateStatus(status);
-        } else throw new ConflictException("Incident status from %s to %s invalid".formatted(currentStatus, status));
-        return incident;
-    }
-
-    public Incident updateDetails(UUID id, String details) {
-        Incident incident = this.getById(id);
+        if (status != null) {
+            if (isValidStatus(incident, status)) {
+                incident.updateStatus(status);
+            } else {
+                IncidentStatus current = incident.getStatus();
+                throw new ConflictException("Incident status from %s to %s invalid".formatted(current, status));
+            }
+        }
         if (details != null) incident.updateDetails(details);
         return incident;
     }
 
-    public void delete(UUID id) {
-        Incident incident = this.getById(id);
-        incidentRepository.delete(incident);
-    }
-
-    private boolean isValidStatus(Incident incident, IncidentStatus newStatus) {
-        if (newStatus == null) return false;
-        IncidentStatus currentStatus = incident.getStatus();
-        switch (currentStatus) {
+    private boolean isValidStatus(Incident incident, IncidentStatus status) {
+        IncidentStatus current = incident.getStatus();
+        switch (current) {
             case OPEN -> {
-                if (newStatus == IncidentStatus.ACKNOWLEDGED) return true;
-                if (newStatus == IncidentStatus.RESOLVED) return true;
+                if (status == IncidentStatus.ACKNOWLEDGED) return true;
+                if (status == IncidentStatus.RESOLVED) return true;
             }
             case ACKNOWLEDGED -> {
-                if (newStatus == IncidentStatus.RESOLVED) return true;
+                if (status == IncidentStatus.RESOLVED) return true;
             }
         }
         return false;
