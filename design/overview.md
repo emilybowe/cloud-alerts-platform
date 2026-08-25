@@ -42,7 +42,7 @@ Client ──▶ Spring Boot API ──▶ PostgreSQL
 
 ## Stack
 
-Java 17, Spring Boot, JPA, Flyway, PostgreSQL, Micrometer, Docker Compose; later Terraform + ECS/EKS + RDS.
+Java 25, Spring Boot, JPA, Flyway, PostgreSQL, Micrometer, Docker Compose; later Terraform + ECS/EKS + RDS.
 
 ## Milestones
 

@@ -4,7 +4,7 @@ Alert management service built as a portfolio project: REST API for alert rules 
 
 ## Stack
 
-Java 17 · Spring Boot · PostgreSQL · Flyway · Micrometer · Docker Compose · (later) AWS + Terraform
+Java 25 · Spring Boot · PostgreSQL · Flyway · Micrometer · Docker Compose · (later) AWS + Terraform
 
 ## Status
 
