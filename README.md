@@ -71,8 +71,11 @@ Demo endpoints:
 ./mvnw test
 ```
 
+Grafana:
+http://localhost:3000
 
-Full local stack and curl examples will land with Milestone 1.
+Prometheus:
+http://localhost:9090
 
 ## Design
 
