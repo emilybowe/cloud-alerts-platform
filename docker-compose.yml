@@ -48,3 +48,7 @@ services:
         source: ./observability/grafana/provisioning
         target: /etc/grafana/provisioning
         read_only: true
+      - type: bind
+        source: ./observability/grafana/dashboards
+        target: /var/lib/grafana/dashboards
+        read_only: true
