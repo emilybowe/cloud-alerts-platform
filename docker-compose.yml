@@ -56,3 +56,17 @@ services:
         source: ./observability/grafana/dashboards
         target: /var/lib/grafana/dashboards
         read_only: true
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    ports:
+      - "9093:9093"
+    depends_on:
+      - prometheus
+    volumes:
+      - type: bind
+        source: ./observability/alertmanager/alertmanager.yml
+        target: /etc/alertmanager/alertmanager.yml
+        read_only: true
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml

@@ -1,0 +1,11 @@
+route:
+  receiver: api-webhook
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 5m
+
+receivers:
+  - name: api-webhook
+    webhook_configs:
+      - url: "http://api:8080/api/v1/webhooks/alertmanager"
+        send_resolved: true
