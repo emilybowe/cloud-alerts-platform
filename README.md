@@ -8,7 +8,7 @@ Java 25 · Spring Boot · PostgreSQL · Flyway · Micrometer · Docker Compose �
 
 ## Status
 
-Milestone 1 local API is runnable via Compose.
+Milestone 2 observability loop is runnable via Compose: scrape → Grafana → firing alerts → incidents.
 
 ## Quick start
 
@@ -65,17 +65,45 @@ Demo endpoints:
 `GET /demo/slow?ms=500` — delay
 `GET /demo/error?rate=0.5` — response mix of 200/500
 
+## Architecture
+
+```
+Client ──▶ Spring Boot API ──▶ PostgreSQL
+                │
+                ▼
+         Prometheus ──▶ Alertmanager ──webhook──▶ API (incidents)
+                │
+                ▼
+             Grafana
+```
+
+## Observability
+
+| UI | URL | Notes |
+|----|-----|--------|
+| Grafana | http://localhost:3000 | Dashboard **Cloud Alerts Platform** is provisioned; no import. |
+| Prometheus | http://localhost:9090 | Alerts → Pending / Firing |
+| Alertmanager | http://localhost:9093 | Routes to `POST /api/v1/webhooks/alertmanager` |
+
+On-call steps: [docs/runbook.md](docs/runbook.md).
+
+Trigger `HighErrorRate` (keep this running **>2 minutes** — rules use `for: 2m`):
+```shell
+while true; do curl -s -o /dev/null "http://localhost:8080/demo/error?rate=0.5"; sleep 0.2; done
+```
+Then:
+```shell
+curl -s http://localhost:8080/api/v1/incidents
+```
+
+You should see an OPEN incident with alertName HighErrorRate.
+Stop the loop; after the alert clears, Alertmanager sends resolved and that incident should become RESOLVED.
+
 ## Development
 
 ```shell
 ./mvnw test
 ```
-
-Grafana:
-http://localhost:3000
-
-Prometheus:
-http://localhost:9090
 
 ## Design
 
