@@ -105,6 +105,8 @@ Stop the loop; after the alert clears, Alertmanager sends resolved and that inci
 ./mvnw test
 ```
 
+Pushes and PRs to main run `./mvnw test` in `.github/workflows/ci.yml`
+
 ## Design
 
 See [design/overview.md](design/overview.md) for architecture, domain model, and API outline.
