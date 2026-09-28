@@ -4,6 +4,7 @@ import com.emilybowe.cloudalertsplatform.domain.IncidentStatus;
 import com.emilybowe.cloudalertsplatform.domain.Severity;
 import com.emilybowe.cloudalertsplatform.repository.IncidentRepository;
 import com.emilybowe.cloudalertsplatform.web.dto.AlertmanagerWebhookRequest;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -16,16 +17,22 @@ public class AlertmanagerWebhookService {
 
     private final IncidentRepository incidentRepository;
     private final IncidentService incidentService;
+    private final MeterRegistry meterRegistry;
 
     public AlertmanagerWebhookService(
             IncidentRepository incidentRepository,
-            IncidentService incidentService
+            IncidentService incidentService,
+            MeterRegistry meterRegistry
     ) {
         this.incidentRepository = incidentRepository;
         this.incidentService = incidentService;
+        this.meterRegistry = meterRegistry;
     }
 
     public void handle(AlertmanagerWebhookRequest request) {
+        String status = request.status() != null ? request.status() : "unknown";
+        meterRegistry.counter("alertmanager.webhooks.received", "status", status).increment();
+
         if (request.alerts() == null) return;
 
         for(AlertmanagerWebhookRequest.AlertmanagerAlert alert : request.alerts()) {

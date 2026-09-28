@@ -7,7 +7,8 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record AlertmanagerWebhookRequest(
-    List<AlertmanagerAlert> alerts
+        String status,
+        List<AlertmanagerAlert> alerts
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record AlertmanagerAlert(

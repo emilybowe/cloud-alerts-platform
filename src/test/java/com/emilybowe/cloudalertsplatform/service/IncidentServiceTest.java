@@ -4,6 +4,8 @@ import com.emilybowe.cloudalertsplatform.domain.Incident;
 import com.emilybowe.cloudalertsplatform.domain.IncidentStatus;
 import com.emilybowe.cloudalertsplatform.domain.Severity;
 import com.emilybowe.cloudalertsplatform.repository.IncidentRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,14 +18,19 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class IncidentServiceTest {
 
     @Mock
     IncidentRepository incidentRepository;
+
+    @Mock
+    MeterRegistry meterRegistry;
 
     @InjectMocks
     IncidentService incidentService;
@@ -32,6 +39,10 @@ class IncidentServiceTest {
     void create() {
         when(incidentRepository.save(any(Incident.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Counter counter = mock(Counter.class);
+        when(meterRegistry.counter(eq("incidents.created"), eq("severity"), eq("CRITICAL")))
+                .thenReturn(counter);
 
         Incident incident = incidentService.create("overload", Severity.CRITICAL, "system overload", "", null);
 
@@ -42,6 +53,7 @@ class IncidentServiceTest {
         assertThat(incident.getRuleId()).isEqualTo(null);
 
         verify(incidentRepository).save(incident);
+        verify(counter).increment();
     }
 
     @Test

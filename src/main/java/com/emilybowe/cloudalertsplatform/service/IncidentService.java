@@ -4,6 +4,7 @@ import com.emilybowe.cloudalertsplatform.domain.Incident;
 import com.emilybowe.cloudalertsplatform.domain.IncidentStatus;
 import com.emilybowe.cloudalertsplatform.domain.Severity;
 import com.emilybowe.cloudalertsplatform.repository.IncidentRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.UUID;
 public class IncidentService {
 
     private final IncidentRepository incidentRepository;
+    private final MeterRegistry meterRegistry;
 
-    public IncidentService(IncidentRepository incidentRepository) {
+    public IncidentService(IncidentRepository incidentRepository, MeterRegistry meterRegistry) {
         this.incidentRepository = incidentRepository;
+        this.meterRegistry = meterRegistry;
     }
 
     public Incident create(String alertName, Severity severity, String summary, String details, UUID ruleId) {
@@ -24,6 +27,7 @@ public class IncidentService {
         if (details != null) incident.updateDetails(details);
         if (ruleId != null) incident.updateRuleId(ruleId);
         incidentRepository.save(incident);
+        meterRegistry.counter("incidents.created", "severity", severity.name()).increment();
         return incident;
     }
 
