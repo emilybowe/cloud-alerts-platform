@@ -8,7 +8,13 @@ Java 25 · Spring Boot · PostgreSQL · Flyway · Micrometer · Docker Compose �
 
 ## Status
 
-Milestone 2 observability loop is runnable via Compose: scrape → Grafana → firing alerts → incidents.
+Complete for local use: API, Postgres, observability loop (Prometheus → Alertmanager → incidents), Grafana dashboard, runbook. CI: tests + Docker image build on push/PR. Not yet: AWS deploy (Terraform / RDS / ECS or EKS).
+
+## Prerequisites
+
+- **Docker + Docker Compose** — required for the full demo
+- **Java 25** — only if you run `./mvnw test` on the host (CI covers this otherwise)
+- **AWS / Terraform** — not required for the local demo
 
 ## Quick start
 
@@ -99,6 +105,12 @@ curl -s http://localhost:8080/api/v1/incidents
 You should see an OPEN incident with alertName HighErrorRate.
 Stop the loop; after the alert clears, Alertmanager sends resolved and that incident should become RESOLVED.
 
+## AWS deployment (planned)
+
+Not implemented yet. Intended follow-up: Terraform (VPC, RDS PostgreSQL, ECR),
+container runtime (ECS Fargate or EKS), and GitHub Actions push to ECR on main.
+Observability can stay local to limit cost.
+
 ## Development
 
 ```shell
@@ -113,14 +125,11 @@ See [design/overview.md](design/overview.md) for architecture, domain model, and
 
 ## Roadmap
 
-1. **Local API** — CRUD, tests, Compose  
-2. **Observability** — metrics, alerts, webhook → incidents  
-3. **CI & AWS** — GitHub Actions, Terraform deploy  
+- **Local API** — done
+- **Observability** — done
+- **CI** — done (test + image build)
+- **AWS deploy** — planned (Terraform, RDS, container runtime)
 
 ## Related
 
 Companion repos (separate): `incident-copilot` (LLM sidecar), `reliability-lab` (k6 / fault injection).
-
-## License
-
-MIT
